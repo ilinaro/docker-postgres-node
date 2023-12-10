@@ -1,12 +1,19 @@
 import { Request, Response } from 'express';
 
 import Person from '../models/person.model';
+import xss from 'xss';
 
 class UserController {
   async createUser(req: Request, res: Response) {
     try {
       const { name, surname } = req.body;
       const newPerson = await Person.create({ name, surname });
+
+      const sanitizedPerson = {
+        id: newPerson?.id,
+        name: xss(newPerson?.name || ""),
+        surname: xss(newPerson?.surname ?? ""),
+      };
     /*
         POST http://localhost:8080/api/user
         {
@@ -21,7 +28,7 @@ class UserController {
           "surname": "ivanov2"
         }
     */
-      res.json(newPerson);
+      res.json(sanitizedPerson);
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: 'Внутренняя ошибка сервера' });
@@ -31,6 +38,12 @@ class UserController {
   async getUsers(req: Request, res: Response) {
     try {
       const users = await Person.findAll();
+
+      const sanitizedUsers = users.map(user => ({
+        id: user.id,
+        name: xss(user?.name || ""),
+        surname: xss(user.surname || ""),
+      }));
     /*
         GET http://localhost:8080/api/user
 
@@ -48,7 +61,8 @@ class UserController {
           }
         ]
       */
-      res.json(users);
+     
+      res.json(sanitizedUsers);
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: 'Внутренняя ошибка сервера' });
@@ -77,6 +91,7 @@ class UserController {
 
       user.name = name;
       user.surname = surname;
+      
       await user.save();
       /*
         PUT http://localhost:8080/api/user
@@ -120,7 +135,7 @@ class UserController {
           "surname": "ivanov"
         }
       */
-      res.json(user);
+      res.json({detail: `Пользователь удален ${xss(user?.name || "")}`});
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: 'Внутренняя ошибка сервера' });

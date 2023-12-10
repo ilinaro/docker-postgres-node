@@ -3,7 +3,12 @@ import { DataTypes, Model } from 'sequelize';
 import Person from './person.model';
 import sequelize from '../db';
 
-class Post extends Model {}
+class Post extends Model {
+    id: number | undefined;
+    title: string | undefined;
+    content: string | undefined;
+    user_id: number | undefined;
+}
 
 Post.init(
   {
