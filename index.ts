@@ -10,5 +10,5 @@ app.use('/api', userRouter);
 app.use('/api', postRouter);
 
 app.listen(PORT, () => {
-  console.log("server start " + PORT);
+  console.log("запуск сервера " + PORT);
 });

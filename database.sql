@@ -11,6 +11,3 @@ CREATE TABLE post (
     user_id INTEGER,
     FOREIGN KEY (user_id) REFERENCES person (id) 
 );
-
-#SELECT * from post;
-
